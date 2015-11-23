@@ -86,7 +86,8 @@ def convert_mth_strings ( mth_string ):
 #### VARIABLES 1.0
 
 entity_id = "E4503_NTMBC_gov"
-url = 'http://www.northtyneside.gov.uk/browse-display.shtml?p_ID=538404&p_subjectCategory=1178'
+#url = 'http://www.northtyneside.gov.uk/browse-display.shtml?p_ID=538404&p_subjectCategory=1178'
+url = 'http://www.northtyneside.gov.uk/datastore.shtml?p_subjectCategory=1178'
 errors = 0
 data = []
 
@@ -102,13 +103,30 @@ soup = BeautifulSoup(html, 'lxml')
 block = soup.find('div', 'content')
 links = block.findAll('a', href = True)
 for link in links:
-    url = 'http://www.northtyneside.gov.uk' + link['href']
-    csvfile = link.text.strip()
-    if 'csv' in csvfile:
-        csvMth = csvfile.split(' ')[0].strip()[0:3]
-        csvYr = csvfile.split(' ')[1].strip()
-        csvMth = convert_mth_strings(csvMth.upper())
-        data.append([csvYr, csvMth, url])
+    if 'over' in link.text:
+        page_url = 'http://www.northtyneside.gov.uk/' + link['href']
+        page_html = urllib2.urlopen(page_url)
+        page_soup = BeautifulSoup(page_html, 'lxml')
+        page_block = page_soup.find('div', 'content')
+        page_links = page_block.findAll('a', href = True)
+        if '558030' in link['href'] or '560507' in link['href']:
+            for page_link in page_links:
+                csvfile = page_link.text.strip()
+                url = 'http://www.northtyneside.gov.uk'+page_link['href']
+                if 'voice' in csvfile and 'csv' in csvfile:
+                    csvMth = csvfile.split(' ')[0].strip()[0:3]
+                    csvYr = csvfile.split(' ')[1].strip()
+                    csvMth = convert_mth_strings(csvMth.upper())
+                    data.append([csvYr, csvMth, url])
+        else:
+            for page_link in page_links:
+                csvfile = page_link.text.strip()
+                url = 'http://www.northtyneside.gov.uk'+page_link['href']
+                if 'csv' in csvfile:
+                    csvMth = csvfile.split(' ')[0].strip()[0:3]
+                    csvYr = csvfile.split(' ')[1].strip()
+                    csvMth = convert_mth_strings(csvMth.upper())
+                    data.append([csvYr, csvMth, url])
 
 
 #### STORE DATA 1.0
