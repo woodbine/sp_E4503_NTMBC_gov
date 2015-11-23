@@ -86,7 +86,6 @@ def convert_mth_strings ( mth_string ):
 #### VARIABLES 1.0
 
 entity_id = "E4503_NTMBC_gov"
-#url = 'http://www.northtyneside.gov.uk/browse-display.shtml?p_ID=538404&p_subjectCategory=1178'
 url = 'http://www.northtyneside.gov.uk/datastore.shtml?p_subjectCategory=1178'
 errors = 0
 data = []
